@@ -39,7 +39,7 @@ enum class ShieldTab(val title: String, val icon: ImageVector) {
     DASHBOARD("Meyor", Icons.Default.Home),
     PROTECTION("SMS/Call", Icons.Default.Security),
     MONITORING("Veb-Filtr", Icons.Default.Language),
-    APK_SCAN("Scanner", Icons.Default.Build),
+    APK_SCAN("Scanner", Icons.Default.QrCodeScanner),
     SETTINGS("Sozlamalar", Icons.Default.Settings)
 }
 
@@ -63,7 +63,9 @@ fun MainAppLayout(shieldViewModel: ShieldViewModel) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val isOnboardingCompleted by shieldViewModel.isOnboardingCompleted.collectAsState()
+    val currentLanguage by shieldViewModel.currentLanguageSetting.collectAsState()
     var systemPermissionsGranted by remember { mutableStateOf(checkCurrentPermissionsSync(context)) }
+    var showSplash by remember { mutableStateOf(true) }
 
     // Synchronize permission checking when returning to the application (ON_RESUME)
     DisposableEffect(lifecycleOwner) {
@@ -80,7 +82,13 @@ fun MainAppLayout(shieldViewModel: ShieldViewModel) {
         }
     }
 
-    if (!systemPermissionsGranted && !isOnboardingCompleted) {
+    if (showSplash) {
+        LogoSplashScreen(
+            currentLanguage = currentLanguage,
+            onLanguageChange = { shieldViewModel.setLanguage(it) },
+            onDismissSplash = { showSplash = false }
+        )
+    } else if (!systemPermissionsGranted && !isOnboardingCompleted) {
         PermissionOnboardingScreen(
             onPermissionsGranted = { shieldViewModel.setOnboardingCompleted(true) }
         )
@@ -211,7 +219,8 @@ fun MainNavigationContainer(shieldViewModel: ShieldViewModel) {
                         onToggleShield = { shieldViewModel.setShieldActive(it) },
                         onNavigateToLogs = { selectedTab = ShieldTab.PROTECTION },
                         onTriggerManualSync = { shieldViewModel.syncSpamDatabase() },
-                        isWebFilterActive = isWebAccessibilityActive
+                        isWebFilterActive = isWebAccessibilityActive,
+                        onLanguageChange = { shieldViewModel.setLanguage(it) }
                     )
 
                     ShieldTab.PROTECTION -> ProtectionScreen(
@@ -241,6 +250,7 @@ fun MainNavigationContainer(shieldViewModel: ShieldViewModel) {
                     )
 
                     ShieldTab.APK_SCAN -> ApkScanScreen(
+                        currentLanguage = currentLanguage,
                         scanResultsFlow = shieldViewModel.allScanResults,
                         onSaveScanResult = { s -> shieldViewModel.insertScanResult(s) },
                         onClearScanResults = { shieldViewModel.clearAllScanResults() }
@@ -277,13 +287,14 @@ fun checkCurrentPermissionsSync(context: Context): Boolean {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         val hasSms = context.checkSelfPermission(android.Manifest.permission.RECEIVE_SMS) == android.content.pm.PackageManager.PERMISSION_GRANTED
         val hasPhone = context.checkSelfPermission(android.Manifest.permission.READ_PHONE_STATE) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        val hasCallLog = context.checkSelfPermission(android.Manifest.permission.READ_CALL_LOG) == android.content.pm.PackageManager.PERMISSION_GRANTED
         val hasOverlay = Settings.canDrawOverlays(context)
         val hasNotification = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) == android.content.pm.PackageManager.PERMISSION_GRANTED
         } else {
             true
         }
-        return hasSms && hasPhone && hasOverlay && hasNotification
+        return hasSms && hasPhone && hasCallLog && hasOverlay && hasNotification
     }
     return true
 }

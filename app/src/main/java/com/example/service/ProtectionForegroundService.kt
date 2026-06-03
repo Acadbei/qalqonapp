@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.MainActivity
 import com.example.R
@@ -39,7 +40,11 @@ class ProtectionForegroundService : Service() {
             .setCategory(Notification.CATEGORY_SERVICE)
             .build()
 
-        startForeground(NOTIFICATION_ID, notification)
+        try {
+            startForeground(NOTIFICATION_ID, notification)
+        } catch (e: Exception) {
+            Log.e("ProtectionFGS", "Failed to start foreground service: ${e.message}", e)
+        }
         return START_STICKY
     }
 

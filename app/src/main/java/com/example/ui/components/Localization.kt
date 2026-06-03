@@ -102,7 +102,10 @@ object Localization {
             "keyword" to "Kalit so'z",
             "registered_keywords" to "KIRITILGAN KALIT SO'ZLAR",
             "admin_only_overlay" to "Ushbu bo'lim faqat Administrator uchun! Sozlamalardan 'Administrator Bo'limi'ni faollashtiring.",
-            "select_language" to "🇺🇿 ILOWA TILI (LANGUAGE)"
+            "select_language" to "🇺🇿 ILOWA TILI (LANGUAGE)",
+            "admin_settings_sub" to "PIN-kod va xavfsizlik sozlamalari",
+            "web_filter_title" to "VEB SAYTLAR FILTRI",
+            "web_filter_sub" to "Brauzerda taqiqlangan saytlarga kirishni cheklash"
         ),
         AppLanguage.UZ_CYRILLIC to mapOf(
             "app_name" to "Қалқон",
@@ -191,7 +194,10 @@ object Localization {
             "keyword" to "Калит сўз",
             "registered_keywords" to "КИРИТИЛГАН КАЛИТ СЎЗЛАР",
             "admin_only_overlay" to "Ушбу бўлим фақат Администратор учун! Созламалардан 'Администратор Бўлими'ни фаоллаштиринг.",
-            "select_language" to "🇺🇿 ИЛОВА ТИЛИ (LANGUAGE)"
+            "select_language" to "🇺🇿 ИЛОВА ТИЛИ (LANGUAGE)",
+            "admin_settings_sub" to "PIN-код ва хавфсизлик созламалари",
+            "web_filter_title" to "ВЕБ САЙТЛАР ФИЛЬТРИ",
+            "web_filter_sub" to "Браузерда тақиқланган сайтларга киришни чеклаш"
         ),
         AppLanguage.KAZAKH to mapOf(
             "app_name" to "Qalqon",
@@ -279,8 +285,11 @@ object Localization {
             "add_keyword" to "Кілт сөзді қосу",
             "keyword" to "Кілт сөз",
             "registered_keywords" to "ЕНГІЗІЛГЕН КІЛТ СӨЗДЕР",
-            "admin_only_overlay" to "Бұл бөлім тек Әкімшіге арналған! Баптаулардан 'Әкімші Бөлімін' белсендіріңіз.",
-            "select_language" to "🇺🇿 ТІЛ БАПТАУЛАРЫ (LANGUAGE)"
+            "admin_only_overlay" to "Бүл бөлім тек Әкімшіге арналған! Баптаулардан 'Әкімші Бөлімін' белсендіріңіз.",
+            "select_language" to "🇺🇿 ТІЛ БАПТАУЛАРЫ (LANGUAGE)",
+            "admin_settings_sub" to "PIN-код және қауіпсіздік параметрлері",
+            "web_filter_title" to "ВЕБ СAЙТТАР ФИЛЬТРІ",
+            "web_filter_sub" to "Браузердегі тыйым салынған сайттарға кіруді шектеу"
         ),
         AppLanguage.KYRGYZ to mapOf(
             "app_name" to "Qalqon",
@@ -369,7 +378,10 @@ object Localization {
             "keyword" to "Ачкыч сөз",
             "registered_keywords" to "КИРГИЗИЛГЕН АЧКЫЧ СӨЗДӨР",
             "admin_only_overlay" to "Бул бөлүм Администратор үчүн гана! Жөндөөлөрдөн 'Администратор Бөлүмүн' иштетиңиз.",
-            "select_language" to "🇺🇿 ТИЛ ЖӨНДӨӨЛӨРҮ (LANGUAGE)"
+            "select_language" to "🇺🇿 ТИЛ ЖӨНДӨӨЛӨРҮ (LANGUAGE)",
+            "admin_settings_sub" to "PIN-код жана коопсуздук жөндөөлөрү",
+            "web_filter_title" to "ВЕБ САЙТТАР ФИЛЬТРИ",
+            "web_filter_sub" to "Браузердеги тыюу салынган сайттарга кирүүнү чектөө"
         ),
         AppLanguage.RUSSIAN to mapOf(
             "app_name" to "Калькон",
@@ -458,7 +470,10 @@ object Localization {
             "keyword" to "Ключевое слово",
             "registered_keywords" to "ВНЕСЕННЫЕ КЛЮЧЕВЫЕ СЛОВА",
             "admin_only_overlay" to "Этот раздел только для Администратора! Включите 'Раздел Администратора' в настройках.",
-            "select_language" to "🇺🇿 ЯЗЫК ПРИЛОЖЕНИЯ (LANGUAGE)"
+            "select_language" to "🇺🇿 ЯЗЫК ПРИЛОЖЕНИЯ (LANGUAGE)",
+            "admin_settings_sub" to "Настройки PIN-кода и безопасности",
+            "web_filter_title" to "ФИЛЬТР ВЕБ-САЙТОВ",
+            "web_filter_sub" to "Ограничение доступа к запрещенным сайтам в браузере"
         ),
         AppLanguage.KARAKALPAK to mapOf(
             "app_name" to "Qalqon",
@@ -547,7 +562,10 @@ object Localization {
             "keyword" to "Kilt sóz",
             "registered_keywords" to "KIRGIZILGEN KILT SÓZLER",
             "admin_only_overlay" to "Bul bólim tek Administrator ushın! Sazlawlardan 'Administrator Bólimin' belsendi qılıń.",
-            "select_language" to "🇺🇿 BAǴDARLAMA TILI (LANGUAGE)"
+            "select_language" to "🇺🇿 BAǴDARLAMA TILI (LANGUAGE)",
+            "admin_settings_sub" to "PIN-kod hám qápsizlik sazlamaları",
+            "web_filter_title" to "VEB SAYTLAR FILTRI",
+            "web_filter_sub" to "Brauzerde qadaǵan etilgen saytlarǵa kiriwdi sheklew"
         ),
         AppLanguage.ENGLISH to mapOf(
             "app_name" to "Qalqon",
@@ -636,7 +654,10 @@ object Localization {
             "keyword" to "Keyword",
             "registered_keywords" to "BLOCKED KEYWORDS LIST",
             "admin_only_overlay" to "This section is restricted to Administrators! Please unlock the Administrator section from Settings.",
-            "select_language" to "🇺🇿 CHANGE APPLICATION LANGUAGE"
+            "select_language" to "🇺🇿 CHANGE APPLICATION LANGUAGE",
+            "admin_settings_sub" to "PIN-code and security settings",
+            "web_filter_title" to "WEB SITES FILTER",
+            "web_filter_sub" to "Restrict access to banned websites in the browser"
         )
     )
 

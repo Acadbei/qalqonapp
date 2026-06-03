@@ -8,12 +8,11 @@ plugins {
 
 android {
   namespace = "com.example"
-  compileSdk { version = release(36) { minorApiLevel = 1 } }
-
+  compileSdk = 35
   defaultConfig {
     applicationId = "com.aistudio.qalqonapp.hdyqz"
     minSdk = 24
-    targetSdk = 36
+    targetSdk = 35
     versionCode = 1
     versionName = "1.0"
 
@@ -119,3 +118,41 @@ dependencies {
   "ksp"(libs.androidx.room.compiler)
   "ksp"(libs.moshi.kotlin.codegen)
 }
+
+tasks.register<Copy>("copyApkToWorkspace") {
+  from(layout.buildDirectory.dir("outputs/apk/debug"))
+  include("app-debug.apk")
+  into(file("${rootDir}/apk"))
+  rename { "QalqonApp.apk" }
+}
+
+tasks.register("copyApksToRootPlain") {
+  mustRunAfter("copyApkToWorkspace")
+  val rootDirFile = layout.projectDirectory.asFile
+  val srcFile = file("${rootDirFile.absolutePath}/apk/QalqonApp.apk")
+  val target1 = file("${rootDirFile.absolutePath}/QalqonApp.apk")
+  val target2 = file("${rootDirFile.absolutePath}/Qalqon_Security_App.apk")
+  
+  doLast {
+    if (srcFile.exists()) {
+      srcFile.copyTo(target1, overwrite = true)
+      srcFile.copyTo(target2, overwrite = true)
+      println("Successfully copied APKs to root workspace!")
+    } else {
+      println("Warning: Source APK not found at ${srcFile.absolutePath}")
+    }
+  }
+}
+
+tasks.register<Copy>("copyBuildToWorkspace") {
+  mustRunAfter("copyApksToRootPlain")
+  from(layout.buildDirectory)
+  into(file("${rootDir}/app_build_visible"))
+  exclude("**/tmp/**")
+  exclude("**/intermediates/**")
+}
+
+tasks.matching { it.name == "assembleDebug" }.configureEach {
+  finalizedBy("copyApkToWorkspace", "copyApksToRootPlain", "copyBuildToWorkspace")
+}
+

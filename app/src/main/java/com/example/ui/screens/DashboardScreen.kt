@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Sms
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -53,7 +54,8 @@ fun DashboardScreen(
     isWebFilterActive: Boolean,
     onToggleShield: (Boolean) -> Unit,
     onNavigateToLogs: () -> Unit,
-    onTriggerManualSync: () -> Unit
+    onTriggerManualSync: () -> Unit,
+    onLanguageChange: (AppLanguage) -> Unit
 ) {
     val context = LocalContext.current
     val spamLogs by spamLogFlow.collectAsState(initial = emptyList())
@@ -169,19 +171,127 @@ fun DashboardScreen(
                     }
                 }
 
-                IconButton(
-                    onClick = onTriggerManualSync,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.05f), CircleShape)
-                        .border(1.dp, MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f), CircleShape)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = "Sinxronlash",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(20.dp)
-                    )
+                    var showLangDialog by remember { mutableStateOf(false) }
+
+                    Box(
+                        modifier = Modifier
+                            .height(40.dp)
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.05f))
+                            .border(1.dp, MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f), RoundedCornerShape(20.dp))
+                            .clickable { showLangDialog = true }
+                            .padding(horizontal = 12.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Language, // Globe (wwwicon)
+                                contentDescription = "Language",
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            val langCode = when (currentLanguage) {
+                                AppLanguage.UZ_LATIN -> "UZ"
+                                AppLanguage.UZ_CYRILLIC -> "УЗ"
+                                AppLanguage.KAZAKH -> "KZ"
+                                AppLanguage.KYRGYZ -> "KG"
+                                AppLanguage.RUSSIAN -> "RU"
+                                AppLanguage.KARAKALPAK -> "QQ"
+                                AppLanguage.ENGLISH -> "EN"
+                            }
+                            Text(
+                                text = langCode,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp
+                            )
+                        }
+                    }
+
+                    if (showLangDialog) {
+                        AlertDialog(
+                            onDismissRequest = { showLangDialog = false },
+                            title = {
+                                Text(
+                                    text = Localization.getString(currentLanguage, "select_language"),
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            },
+                            text = {
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    AppLanguage.values().forEach { lang ->
+                                        val isSelected = lang == currentLanguage
+                                        Card(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .clickable {
+                                                    onLanguageChange(lang)
+                                                    showLangDialog = false
+                                                },
+                                            colors = CardDefaults.cardColors(
+                                                containerColor = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceVariant
+                                            ),
+                                            border = if (isSelected) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null
+                                        ) {
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(12.dp),
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Text(
+                                                    text = lang.displayName,
+                                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                                    fontSize = 13.sp,
+                                                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                                                )
+                                                if (isSelected) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Check,
+                                                        contentDescription = "Selected",
+                                                        tint = MaterialTheme.colorScheme.primary,
+                                                        modifier = Modifier.size(16.dp)
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            confirmButton = {
+                                TextButton(onClick = { showLangDialog = false }) {
+                                    Text(Localization.getString(currentLanguage, "cancel"))
+                                }
+                            }
+                        )
+                    }
+
+                    IconButton(
+                        onClick = onTriggerManualSync,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.05f), CircleShape)
+                            .border(1.dp, MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f), CircleShape)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = "Sinxronlash",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
                 }
             }
         }
@@ -396,14 +506,18 @@ fun DashboardScreen(
                                 onToggleShield(checked)
                                 // Start/stop service
                                 val serviceIntent = Intent(context, ProtectionForegroundService::class.java)
-                                if (checked) {
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                        context.startForegroundService(serviceIntent)
+                                try {
+                                    if (checked) {
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                            context.startForegroundService(serviceIntent)
+                                        } else {
+                                            context.startService(serviceIntent)
+                                        }
                                     } else {
-                                        context.startService(serviceIntent)
+                                        context.stopService(serviceIntent)
                                     }
-                                } else {
-                                    context.stopService(serviceIntent)
+                                } catch (e: Exception) {
+                                    android.util.Log.e("DashboardScreen", "Failed to start/stop ProtectionForegroundService", e)
                                 }
                             },
                             colors = SwitchDefaults.colors(
